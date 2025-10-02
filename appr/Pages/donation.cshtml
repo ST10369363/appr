@@ -1,0 +1,218 @@
+﻿@page
+@model appr.Pages.donationModel
+@{
+    ViewData["Title"] = "Donation";
+    Layout = null; // Assuming layout is defined elsewhere or not used for this full example
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gift of the Givers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+    <style>
+        /* --- General Styles --- */
+        body {
+            margin: 0;
+            /* IMPORTANT: Add padding to prevent content from hiding under the fixed navbar */
+            padding-top: 70px;
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVIGATION VISIBILITY FIXES START HERE --- */
+        .navbar {
+            /* Use a solid, dark color for contrast */
+            background-color: #1e5631 !important; /* Your primary dark green */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            /* Make the navbar stick to the top */
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030; /* Ensure it stays above other content */
+        }
+
+        .navbar-brand {
+            color: #d4a855 !important; /* Gold color for brand */
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            /* Ensure maximum contrast */
+            color: #ffffff !important;
+            font-weight: 500;
+            font-size: 1.05rem;
+            margin-right: 10px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            border-radius: 5px;
+        }
+
+            .nav-link:hover {
+                /* Clear visual feedback on hover */
+                color: #d4a855 !important; /* Change to gold on hover */
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+        /* Specific styling for the Donate button to make it stand out more */
+        .navbar .btn-danger {
+            /* Note: The Donation page link is the active link, so we highlight it slightly differently */
+            background-color: #d4a855 !important;
+            border-color: #d4a855 !important;
+            color: #1e5631 !important; /* Dark text for contrast on the gold button */
+            font-weight: 700;
+            padding: 8px 18px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+            .navbar .btn-danger:hover {
+                background-color: #c49640 !important;
+                border-color: #c49640 !important;
+                transform: translateY(-1px);
+            }
+        /* --- NAVIGATION VISIBILITY FIXES END HERE --- */
+
+        .donation-section {
+            margin-top: 50px; /* Reduced since body padding is now handling the offset */
+            flex: 1;
+            padding-bottom: 50px;
+        }
+
+        #onSiteForm, #deliveryForm {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            border-top: 5px solid #2d8659;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-uppercase" asp-area="" asp-page="/Index">Gift of the Givers</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                        aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/report">Incident Report</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/volunteer">Volunteer</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/Login">Login / Sign In</a></li>
+                        <li class="nav-item ms-lg-3"><a class="nav-link btn btn-danger px-3" asp-area="" asp-page="/donation">Donate</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container donation-section">
+        <h1 class="text-center mb-4">Making a Difference</h1>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success text-center">@TempData["Message"]</div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
+
+        <div class="d-flex justify-content-center mb-4">
+            <button id="btnOnSite" class="btn btn-primary mx-2" type="button">On-Site Donation</button>
+            <button id="btnDelivery" class="btn btn-secondary mx-2" type="button">Delivery Donation</button>
+        </div>
+
+        <form id="onSiteForm" method="post" class="hidden">
+            <input type="hidden" name="Donation.DonationType" value="On-Site" />
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Location</label>
+                <input name="Donation.OnSiteLocation" type="text" class="form-control"
+                       value="@Model.Donation.OnSiteLocation" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Description of Items</label>
+                <textarea name="Donation.ItemDescription" class="form-control" rows="3"
+                          placeholder="Describe what you are donating" required></textarea>
+                <span asp-validation-for="Donation.ItemDescription" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Send</button>
+        </form>
+
+        <form id="deliveryForm" method="post" class="hidden">
+            <input type="hidden" name="Donation.DonationType" value="Delivery" />
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">What are you delivering?</label>
+                <select name="Donation.DeliveryCategory" class="form-select" required>
+                    <option value="">-- Select --</option>
+                    <option value="Food">Food</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="Donation.DeliveryCategory" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Address</label>
+                <input name="Donation.DeliveryAddress" type="text" class="form-control"
+                       placeholder="Enter your delivery address" required />
+                <span asp-validation-for="Donation.DeliveryAddress" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Description of Items</label>
+                <textarea name="Donation.ItemDescription" class="form-control" rows="3"
+                          placeholder="Describe what you are donating" required></textarea>
+                <span asp-validation-for="Donation.ItemDescription" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Do you need boxes?</label><br />
+                <input type="radio" name="Donation.NeedsBoxes" value="True" /> Yes
+                <input type="radio" name="Donation.NeedsBoxes" value="False" class="ms-3" /> No
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Remain Anonymous?</label><br />
+                <input type="radio" name="Donation.IsAnonymous" value="True" /> Yes
+                <input type="radio" name="Donation.IsAnonymous" value="False" class="ms-3" /> No
+            </div>
+            <button type="submit" class="btn btn-success w-100">Send</button>
+        </form>
+    </div>
+
+    <footer class="footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle forms logic remains the same (client-side only)
+        document.getElementById("btnOnSite").addEventListener("click", function () {
+            document.getElementById("onSiteForm").classList.remove("hidden");
+            document.getElementById("deliveryForm").classList.add("hidden");
+        });
+
+        document.getElementById("btnDelivery").addEventListener("click", function () {
+            document.getElementById("deliveryForm").classList.remove("hidden");
+            document.getElementById("onSiteForm").classList.add("hidden");
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

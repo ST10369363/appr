@@ -1,0 +1,425 @@
+﻿@page
+@model appr.Pages.adashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+    <style>
+        /* (KEEP ALL YOUR EXISTING CSS STYLES HERE) */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #1e5631 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            color: #d4a855 !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+            .nav-link:hover {
+                color: #d4a855 !important;
+            }
+
+        .btn-danger {
+            background-color: #d4a855 !important;
+            border-color: #d4a855 !important;
+            font-weight: 600;
+        }
+
+            .btn-danger:hover {
+                background-color: #c49640 !important;
+                border-color: #c49640 !important;
+            }
+
+        .dashboard-content {
+            margin-top: 100px;
+            flex: 1;
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            color: #1e5631;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        h3 {
+            color: #1e5631;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        h5 {
+            color: #2d8659;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #2d8659;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .form-label {
+            color: #1e5631;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #2d8659;
+                box-shadow: 0 0 0 3px rgba(45, 134, 89, 0.1);
+            }
+
+        .btn-primary {
+            background-color: #2d8659;
+            border-color: #2d8659;
+            font-weight: 600;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #1e5631;
+                border-color: #1e5631;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(30, 86, 49, 0.3);
+            }
+
+        .btn-success {
+            background-color: #2d8659;
+            border-color: #2d8659;
+            font-weight: 600;
+        }
+
+            .btn-success:hover {
+                background-color: #1e5631;
+                border-color: #1e5631;
+            }
+
+        .btn-secondary {
+            background-color: #d4a855;
+            border-color: #d4a855;
+            font-weight: 600;
+        }
+
+            .btn-secondary:hover {
+                background-color: #c49640;
+                border-color: #c49640;
+            }
+
+        .list-group-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+            .list-group-item:hover {
+                border-color: #2d8659;
+                box-shadow: 0 2px 8px rgba(45, 134, 89, 0.1);
+            }
+
+        hr {
+            border-color: #2d8659;
+            opacity: 0.3;
+            margin: 25px 0;
+        }
+
+        .footer {
+            background-color: #1e5631;
+            color: white;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #d4a855;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+            .footer-section a:hover {
+                color: #d4a855;
+            }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        section::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        section::-webkit-scrollbar-thumb {
+            background: #2d8659;
+            border-radius: 10px;
+        }
+
+            section::-webkit-scrollbar-thumb:hover {
+                background: #1e5631;
+            }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-uppercase" asp-area="" asp-page="/Index">Gift of the Givers</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                        aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link btn btn-danger text-white px-3" asp-area="" asp-page="/donation">Donate</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/report">Incident Report</a></li>
+                         <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/Login">Login / Sign In</a></li>
+                          <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/volunteer">Volunteer</a></li>
+                 </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container dashboard-content">
+        <h1 class="mb-4">Admin Dashboard</h1>
+
+        <section class="mb-5">
+            <h3>Add Task</h3>
+            <form method="post" asp-page-handler="AddTask">
+
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success mt-3 mb-3">@TempData["Message"]</div>
+                }
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NewTask.TaskName" class="form-label">Task Name</label>
+                    <input asp-for="NewTask.TaskName" type="text" class="form-control" placeholder="Enter task name" />
+                    <span asp-validation-for="NewTask.TaskName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="NewTask.Description" class="form-label">Description</label>
+                    <textarea asp-for="NewTask.Description" class="form-control" rows="3" placeholder="Enter task description"></textarea>
+                    <span asp-validation-for="NewTask.Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="NewTask.Location" class="form-label">Location</label>
+                    <input asp-for="NewTask.Location" type="text" class="form-control" placeholder="Enter location" />
+                    <span asp-validation-for="NewTask.Location" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="NewTask.SkillsNeeded" class="form-label">Skills Needed</label>
+                    <input asp-for="NewTask.SkillsNeeded" type="text" class="form-control" placeholder="Enter required skills" />
+                    <span asp-validation-for="NewTask.SkillsNeeded" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+        </section>
+
+        <section class="mb-5">
+            <h3>Incident Reports (@Model.IncidentReports.Count)</h3>
+            <div class="list-group">
+                @if (Model.IncidentReports.Any())
+                {
+                    @foreach (var report in Model.IncidentReports)
+                    {
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@report.Location (@report.Severity)</h5>
+                                <small class="text-muted">ID: @report.IncidentID | @report.ReportedDate.ToShortDateString()</small>
+                            </div>
+                            <p class="mb-1">**Level:** @report.IncidentLevel</p>
+                            <p class="mb-1">**Description:** @report.Description</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No incident reports found.</p>
+                }
+            </div>
+        </section>
+
+        <section class="mb-5">
+            <h3>Volunteers (@Model.Volunteers.Count)</h3>
+            <ul class="list-group">
+                @if (Model.Volunteers.Any())
+                {
+                    @foreach (var volunteer in Model.Volunteers)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>@volunteer.FirstName @volunteer.Surname (@volunteer.Email)</h5>
+                                <p class="mb-1">**Age:** @(volunteer.Age.HasValue? volunteer.Age.ToString() : "N/A") | **Task:** @(volunteer.Task?.TaskName ?? "General Help")</p>
+                                <p class="mb-1">**Record:** @(volunteer.CriminalRecord ? "Yes" : "No") | **Accepted:** @(volunteer.Accept ? "Yes" : "No")</p>
+                                <small class="text-muted">Applied: @volunteer.DateApplied.ToShortDateString()</small>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted">No volunteer applications found.</li>
+                }
+            </ul>
+        </section>
+
+        <section class="mb-5">
+            <h3>Donations (@Model.Donations.Count)</h3>
+            <ul class="list-group">
+                @if (Model.Donations.Any())
+                {
+                    @foreach (var donation in Model.Donations)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>@donation.DonationType: @donation.ItemDescription</h5>
+                                <p class="mb-1">**Delivery:** @(donation.DeliveryCategory ?? "N/A") | **Address:** @(donation.DeliveryAddress ?? donation.OnSiteLocation ?? "N/A")</p>
+                                <p class="mb-1">**Anonymous:** @(donation.IsAnonymous == true ? "Yes" : "No") | **Boxes Req:** @(donation.NeedsBoxes == true ? "Yes" : "No")</p>
+                                <small class="text-muted">Date: @donation.DonationDate.ToShortDateString()</small>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted">No donations found.</li>
+                }
+            </ul>
+        </section>
+
+        <section class="mb-5">
+            <h3>Box Requests (@Model.BoxRequests.Count)</h3>
+            <ul class="list-group">
+                @if (Model.BoxRequests.Any())
+                {
+                    @foreach (var request in Model.BoxRequests)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>Request ID: @request.DonationID</h5>
+                                <p class="mb-1">**Items:** @request.ItemDescription</p>
+                                <p class="mb-1">**Address:** @(request.DeliveryAddress ?? request.OnSiteLocation)</p>
+                                <small class="text-muted">Date: @request.DonationDate.ToShortDateString()</small>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted">No box requests found.</li>
+                }
+            </ul>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Gift of the Givers is Africa's largest disaster response organization, providing humanitarian aid across 165+ countries for over 30 years.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <p><a href="/">Home</a></p>
+                <p><a href="/About">About</a></p>
+                <p><a href="/Projects">Our Projects</a></p>
+                <p><a href="/Contact">Contact Us</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: info@giftofthegivers.org</p>
+                <p>Phone: +27 36 637 6100</p>
+                <p>Pietermaritzburg, South Africa</p>
+            </div>
+            <div class="footer-section">
+                <h4>Get Involved</h4>
+                <p><a href="/Donate">Donate</a></p>
+                <p><a href="/Volunteer">Volunteer</a></p>
+                <p><a href="/Partner">Partner With Us</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Gift of the Givers Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>
