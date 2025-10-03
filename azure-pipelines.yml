@@ -1,0 +1,69 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildConfiguration: 'Release' # 'Any CPU' isn't usually needed for modern .NET Core/5+ builds
+
+steps:
+# 1. Restore Packages (using DotNetCoreCLI is often simpler for Core projects)
+- task: NuGetToolInstaller@1 # Keep this if you have other dependencies requiring the global NuGet.exe
+
+- task: NuGetCommand@2
+  displayName: 'NuGet Restore'
+  inputs:
+    restoreSolution: '$(solution)'
+
+# --- Optional: If you use .NET Core/5+ you might replace the above two with:
+# - task: DotNetCoreCLI@2
+#   displayName: 'Restore'
+#   inputs:
+#     command: 'restore'
+#     projects: '$(solution)'
+
+# 2. Build the Solution (Using VSBuild@2 for stability)
+- task: VSBuild@2 # UPGRADED to @2
+  displayName: 'Build Solution'
+  inputs:
+    solution: '$(solution)'
+    # Removed deployment args to keep build and publish separate
+    msbuildArgs: '/p:DeployOnBuild=false /p:WebPublishMethod=FileSystem /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PublishProfile=FolderProfile'
+    platform: 'Any CPU' # Kept for backward compatibility with .NET Framework
+    configuration: '$(buildConfiguration)'
+
+# 3. Publish Web App (Creating the deployable artifact)
+- task: DotNetCoreCLI@2 # Use the CLI task to create the deployment package
+  displayName: 'Publish Web App'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+# 4. Run Tests (Using VSTest@3 or DotNetCoreCLI for modern projects)
+- task: VSTest@3 # UPGRADED to @3
+  displayName: 'Run Unit Tests'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*Test*.dll
+      !**\*Test*obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    # Removed platform/configuration if the test assembly path is correct
+    runSettingsFile: '$(System.DefaultWorkingDirectory)\my.runsettings' # Optional
+
+# 5. Publish Artifacts (CRITICAL: Save the build output)
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container' # Save to Azure DevOps
